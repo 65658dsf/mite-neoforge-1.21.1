@@ -2,9 +2,11 @@ package io.github.ningmeng123.mite.entity;
 
 import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.api.MiteExtensions;
+import io.github.ningmeng123.mite.config.MonsterArmorSettings;
 import io.github.ningmeng123.mite.enchantment.SourceEnchantmentCombat;
 import io.github.ningmeng123.mite.rules.BloodMoonEquipmentRules;
 import io.github.ningmeng123.mite.rules.LunarCalendar;
+import io.github.ningmeng123.mite.rules.MonsterArmorRules;
 import io.github.ningmeng123.mite.worldgen.BloodMoonInvasion;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -55,7 +57,7 @@ public final class BloodMoonEquipment {
 
     public static boolean progressionActive(Mob mob) {
         if (!handles(mob) || !(mob.level() instanceof ServerLevel level)) return false;
-        return BloodMoonEquipmentRules.stageForDay(BloodMoonInvasion.highestDay(level)) >= 0;
+        return MonsterArmorSettings.localSettings().rowForDay(BloodMoonInvasion.highestDay(level)) >= 0;
     }
 
     /** True means this armor roll was handled, including an intentionally empty result. */
@@ -64,9 +66,12 @@ public final class BloodMoonEquipment {
         var data = mob.getPersistentData();
         if (data.contains(DATA_KEY)) return true;
         long day = BloodMoonInvasion.highestDay(level);
-        int stage = BloodMoonEquipmentRules.stageForDay(day);
-        if (stage < 0) return false;
+        var settings = MonsterArmorSettings.localSettings();
+        int row = settings.rowForDay(day);
+        if (row < 0) return false;
+        int stage = MonsterArmorRules.stageForRow(row);
         boolean blood = bloodDate(mob);
+        double armorChance = settings.rows().get(row).chance(blood);
         var result = new CompoundTag();
         result.putInt("version", VERSION); result.putInt("stage", stage); result.putInt("tier", -1);
         result.putLong("highest_day", day); result.putDouble("progress", stage);
@@ -74,27 +79,14 @@ public final class BloodMoonEquipment {
         result.putBoolean("blood_date", blood);
         int[] tiers = {-1, -1, -1, -1};
         result.putIntArray("armor_tiers", tiers);
-        if (blood) {
-            int filled = 0;
-            for (int index = 0; index < SLOTS.length; index++) if (mob.getItemBySlot(SLOTS[index]).isEmpty()) {
-                if (mob.getRandom().nextDouble() >= BloodMoonEquipmentRules.armorChance(stage, true)) continue;
-                int tier = selectArmorTier(mob, stage, true);
-                mob.setItemSlot(SLOTS[index], R196MobEquipment.generated(mob,
-                        BloodMoonEquipmentRules.PREFIXES.get(tier) + SUFFIXES[index], true));
-                tiers[index] = tier;
-                filled |= 1 << index;
-            }
-            result.putIntArray("armor_tiers", tiers); result.putInt("filled_slots", filled);
-            return true;
-        }
-        double armorChance = BloodMoonEquipmentRules.ordinaryArmorChance(stage);
-        if (mob.getRandom().nextDouble() >= armorChance) return true;
-        int tier = selectArmorTier(mob, stage, false);
-        result.putInt("tier", tier);
         int filled = 0;
-        for (int index = 0; index < SLOTS.length; index++) if (mob.getItemBySlot(SLOTS[index]).isEmpty()) {
+        for (int index = 0; index < SLOTS.length; index++) {
+            if (!mob.getItemBySlot(SLOTS[index]).isEmpty() || mob.getRandom().nextDouble() >= armorChance) continue;
+            int tier = selectArmorTier(mob, stage, blood);
             mob.setItemSlot(SLOTS[index], R196MobEquipment.generated(mob,
                     BloodMoonEquipmentRules.PREFIXES.get(tier) + SUFFIXES[index], true));
+            // Keep the legacy ordinary-day summary for consumers of the saved decision.
+            if (!blood && filled == 0) result.putInt("tier", tier);
             tiers[index] = tier;
             filled |= 1 << index;
         }
@@ -170,7 +162,7 @@ public final class BloodMoonEquipment {
     public static double legacyChance(Mob mob, double sourceChance) {
         if (!(mob.level() instanceof ServerLevel level) || !handles(mob)) return sourceChance;
         long day = BloodMoonInvasion.highestDay(level);
-        if (!bloodDate(mob)) return !BloodMoonEquipmentRules.ordinaryActive(day)
+        if (!bloodDate(mob)) return MonsterArmorSettings.localSettings().rowForDay(day) < 0
                 ? BloodMoonEquipmentRules.EARLY_ORDINARY_ARMOR_CHANCE : sourceChance;
         return BloodMoonEquipmentRules.bloodMoons(day) == 1L
                 ? BloodMoonEquipmentRules.FIRST_BLOOD_ARMOR_CHANCE : sourceChance;

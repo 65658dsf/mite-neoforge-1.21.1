@@ -35,19 +35,19 @@ def main():
     data["early_ordinary_legacy_armor_chance"] = .3
     data["first_blood_date_material_and_partial_stop_changed"] = True
     data["ordinary_equipment_factor"] = .5
-    data["ordinary_armor_probability"] = "Whole-set acceptance: blood_armor_probability / 2 at the same highest-date stage; legacy entrance 30% before day 16"
-    data["blood_armor_probability"] = "Per initially empty armor slot: (80 + 2 * stage) / 100; independent acceptance and accepted-slot material rolls from day 16 onward. The first default blood moon on day 32 uses stage 1 and an 82% per-slot chance."
+    data["ordinary_armor_probability"] = "Default per initially empty slot: half the default blood-date chance. Servers can edit each date window and both probabilities independently."
+    data["blood_armor_probability"] = "Default per initially empty slot: (80 + 2 * stage) / 100. The first default blood moon on day 32 uses stage 1 and an 82% per-slot chance."
     data["ordinary_held_probability"] = "Empty-main-hand supplementation only: blood_held_probability / 2 at the same highest-date stage"
     data["ordinary_lower_material_weight_ratio"] = .35
     data["ordinary_higher_material_weight_ratio"] = .4
     data["material_weight"] = "center=material_grades[stage]; gradeWeight(g)=g<center ? lower^(center-g) : higher^(g-center); divide each grade weight between its materials. At stage 3, redistribute the combined gold, copper and silver weight of 27/20 equally (9/20 each)."
     data["material_probability"] = "Ordinary and blood dates use the same normalized weights. Copper and silver share their grade; stage 3 also gives gold the same weight as copper and silver. All ten materials remain possible."
-    data["overall_material_probability"] = "Ordinary: whole-set acceptance times conditional material chance for each initially empty slot. Blood: independent single-slot acceptance times material chance. Every ordinary per-slot material marginal is exactly half the same highest-date blood marginal."
+    data["overall_material_probability"] = "On ordinary and blood dates, multiply the individual slot acceptance by the conditional material chance. The default ordinary marginal is half the default blood-date marginal."
     data["probability_oracle"] = "Independent Python fractions.Fraction fixture with nine grades and ten material columns [0,1,2,3,3,4,5,6,7,8], shared ratios 7/20 and 2/5, equal redistribution in stage 3, and ordinary acceptance factor 1/2. No production Java or random-selection implementation is imported."
     data["material_grades"] = list(GRADES)
     data["grade_material_counts"] = [GRADES.count(grade) for grade in range(9)]
     data["grade_names"] = ["leather", "chainmail", "gold", "copper_and_silver", "iron", "ancient_metal", "mithril", "adamantium", "vibranium"]
-    data["equipment_policy"] = "New eligible humanoid monsters only. Persist each spawn decision including empty results. Ordinary dates use one whole-set acceptance/material roll, with acceptance half the same highest-date blood rate and the same material weights. Blood dates independently roll each empty slot. Before day 16, use source materials and partial stopping with 30% ordinary entrance and 60% legacy first blood entrance for an early addon calendar. Preserve fixed equipment floors, explicit stacks, source quality/wear, existing decisions and loaded entities. Calendar enchantment growth and enchanted natural-gear drop penalties are separate shared generation/drop rules."
+    data["equipment_policy"] = "New eligible humanoid monsters independently roll acceptance and material for each empty slot in a configured date window. Persist each spawn decision including empty results. Dates outside the windows use source materials and partial stopping. Preserve fixed equipment floors, explicit stacks, source quality/wear, existing decisions and loaded entities. Calendar enchantment growth and enchanted natural-gear drop penalties are separate shared generation/drop rules."
     data["held_equipment"]["material"] = "Prefer the first newly generated armor piece, then recognized existing armor; otherwise draw independently from the shared highest-date material distribution."
     data["held_equipment"]["tool_prefixes"] = ["mite:rusted_iron_", "mite:rusted_iron_", *PREFIXES[2:]]
     data["held_equipment"]["generation"] = "R196MobEquipment.generated once per new stack, retaining source quality/wear with calendar enchantment growth; death-drop policy is separate."
@@ -81,7 +81,7 @@ def main():
     calendar["progress"] = "Use the material stage unlocked by the highest saved calendar day. Shared thresholds apply on ordinary, blood and blue dates. The day 15 anchor describes the bounded probability helper; actual pre-day-16 spawns use the legacy equipment path."
     calendar["material_interpolation"] = "New ordinary spawns use the integer calendar stage. Compatible fractional API inputs blend adjacent shared normalized distributions."
     calendar["history"] = "Persisted highest primary-world calendar date; time rewind and dimensions do not lower it. Blue dates use ordinary equipment acceptance with the material stage of the saved highest date."
-    calendar["blood_comparison"] = "For each highest date from day 16 and each material, ordinary per-empty-slot armor and empty-main-hand supplement probabilities are exactly half their blood-date counterparts. Whole-suit and at-least-one-piece probabilities differ because ordinary acceptance is shared across slots. Native weapons, fixed sets and shield generation remain independent."
+    calendar["blood_comparison"] = "Default ordinary per-slot armor and empty-main-hand supplement probabilities are half their blood-date counterparts. The in-game armor table edits the date windows and the two per-slot armor chances. Native weapons, fixed sets and shield generation use their own equipment paths."
     calendar["quality_unchanged"] = "Preserve source quality/wear, fixed equipment floors and explicit main hands. Calendar enchantment growth and death-drop policy apply separately."
     calendar["anchors"] = []
     for day in (15, 16, 31, 32, 47, 48, 63, 64, 65, 79, 80, 95, 96, 111, 112, 127, 128, 143, 144, 159, 160,

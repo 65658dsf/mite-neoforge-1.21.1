@@ -3,18 +3,23 @@ package io.github.ningmeng123.mite.gametest;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import com.electronwill.nightconfig.toml.TomlParser;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.mojang.authlib.GameProfile;
 import io.github.ningmeng123.mite.api.MiteExtensions;
 import io.github.ningmeng123.mite.config.GameplayConfigEdits;
 import io.github.ningmeng123.mite.config.MiteConfig;
+import io.github.ningmeng123.mite.config.MonsterArmorSettings;
 import io.github.ningmeng123.mite.network.GameplayConfigEditPayload;
 import io.github.ningmeng123.mite.network.GameplayConfigEditResultPayload;
 import io.github.ningmeng123.mite.network.GameplayConfigPayload;
+import io.github.ningmeng123.mite.rules.MonsterArmorRules;
 import io.github.ningmeng123.mite.rules.MonsterGrowthRules;
 import io.github.ningmeng123.mite.rules.MonsterSpawningSettings.Option;
 import io.netty.buffer.Unpooled;
+import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -22,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.locks.Lock;
+import java.util.function.Consumer;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -98,6 +104,58 @@ public final class GameplayConfigEditGameTests {
                 helper.assertValueEqual(GameplayConfigPayload.CODEC.decode(bytes).snapshot(), published,
                         "The server's resulting revision survives the actual client synchronization codec");
                 helper.assertValueEqual(bytes.readableBytes(), 0, "The synchronization packet is consumed completely");
+            } finally { bytes.release(); }
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void monsterArmorEditsValidatePersistAndSynchronizeTheWholeTable(GameTestHelper helper) throws Exception {
+        try (var settings = new Settings(); var operator = new Operator(helper)) {
+            var before = MonsterArmorSettings.localSettings();
+            byte[] previousFile = Files.readAllBytes(configPath());
+            var rows = new ArrayList<>(MonsterArmorRules.DEFAULTS.rows());
+            rows.set(0, new MonsterArmorRules.Row(19, 30, 12.5D, 73.25D));
+            rows.set(rows.size() - 1, new MonsterArmorRules.Row(9_007_199_254_740_993L, MonsterArmorRules.OPEN_END, 49, 98));
+            var draft = new MonsterArmorRules.Settings(rows);
+            helper.assertValueEqual(GameplayConfigEdits.apply(operator.player, "monster_armor", GSON.toJson(draft)),
+                    "mite.config.remote.no_permission", "Only an operator can save the armor settings");
+            operator.permission(2);
+            for (var change : List.<Consumer<JsonObject>>of(
+                    row -> row.addProperty("startDay", 19.5D),
+                    row -> row.addProperty("startDay", "19"),
+                    row -> row.addProperty("endDay", new BigInteger("9223372036854775808")),
+                    row -> row.addProperty("endDay", 18),
+                    row -> row.addProperty("endDay", 32),
+                    row -> row.addProperty("ordinaryPercent", 100.01D),
+                    row -> row.remove("bloodPercent"))) {
+                var invalid = GSON.toJsonTree(draft).getAsJsonObject();
+                change.accept(invalid.getAsJsonArray("rows").get(0).getAsJsonObject());
+                helper.assertValueEqual(GameplayConfigEdits.apply(operator.player, "monster_armor", invalid.toString()),
+                        "mite.config.remote.invalid", "Invalid armor data is rejected before saving");
+            }
+            helper.assertValueEqual(MonsterArmorSettings.localSettings(), before, "Rejected requests leave the active table untouched");
+            helper.assertTrue(Arrays.equals(Files.readAllBytes(configPath()), previousFile), "Rejected requests leave the config file untouched");
+
+            helper.assertTrue(GameplayConfigEdits.apply(operator.player, "monster_armor", GSON.toJson(draft)) == null,
+                    "An operator can change dates and fractional probabilities together");
+            helper.assertValueEqual(MonsterArmorSettings.localSettings(), draft, "A successful save immediately publishes the full table");
+            var written = new TomlParser().parse(Files.readString(configPath()));
+            var entries = written.<List<String>>get(List.of("monsters", "armor_progression"));
+            helper.assertTrue(entries.contains("leather=19,30,12.5,73.25") && entries.contains("vibranium=9007199254740993,*,49.0,98.0"),
+                    "The common config retains exact day limits and decimal chances");
+
+            var snapshot = MiteConfig.localSnapshot();
+            var packet = new GameplayConfigPayload(snapshot, Map.of(), Map.of(), null, MonsterArmorSettings.localSettings());
+            var bytes = new RegistryFriendlyByteBuf(Unpooled.buffer(), helper.getLevel().registryAccess());
+            try {
+                GameplayConfigPayload.CODEC.encode(bytes, packet);
+                helper.assertValueEqual(GameplayConfigPayload.CODEC.decode(bytes).monsterArmor(), draft,
+                        "The server synchronization packet retains the configured armor table exactly");
+                bytes.writeUtf(GSON.toJson(snapshot), 262144);
+                helper.assertTrue(GameplayConfigPayload.CODEC.decode(bytes).monsterArmor() == null,
+                        "An older server packet without armor settings remains readable");
+                helper.assertValueEqual(bytes.readableBytes(), 0, "The codec consumes both synchronization packets completely");
             } finally { bytes.release(); }
         }
         helper.succeed();

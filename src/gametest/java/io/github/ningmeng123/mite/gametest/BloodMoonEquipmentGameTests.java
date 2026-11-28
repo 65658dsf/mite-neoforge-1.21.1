@@ -1,5 +1,6 @@
 package io.github.ningmeng123.mite.gametest;
 
+import io.github.ningmeng123.mite.config.MonsterArmorSettings;
 import io.github.ningmeng123.mite.entity.BloodMoonEquipment;
 import io.github.ningmeng123.mite.entity.MobEquipmentEnchantments;
 import io.github.ningmeng123.mite.entity.MobKind;
@@ -8,6 +9,7 @@ import io.github.ningmeng123.mite.entity.R196Skeleton;
 import io.github.ningmeng123.mite.item.EquipmentDurability;
 import io.github.ningmeng123.mite.registry.MiteMobs;
 import io.github.ningmeng123.mite.rules.BloodMoonEquipmentRules;
+import io.github.ningmeng123.mite.rules.MonsterArmorRules;
 import io.github.ningmeng123.mite.worldgen.BloodMoonInvasionData;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -79,23 +81,23 @@ public final class BloodMoonEquipmentGameTests {
         }
         throw new AssertionError("No independent fractional progression fixture");
     }
-    private record BloodFixture(long seed, long nextRandom) {}
+    private record SlotFixture(long seed, long nextRandom) {}
     /** Independent first blood moon weights for chainmail and the unenchanted source-item RNG path. */
-    private static BloodFixture firstBloodFixture(float tension, int... expectedTiers) {
+    private static SlotFixture firstBloodFixture(float tension, int... expectedTiers) {
         long[] materialWeights = {109375L, 312500L, 125000L, 25000L, 25000L, 20000L, 8000L, 3200L, 1280L, 512L};
-        return bloodFixture(tension, 32L, .82D, materialWeights, 629867D, expectedTiers);
+        return slotFixture(tension, 32L, .82D, materialWeights, 629867D, expectedTiers);
     }
     /** Independent nine-grade rational weights, with the copper/silver grade divided in half. */
-    private static BloodFixture adamantiumBloodFixture(float tension, int... expectedTiers) {
+    private static SlotFixture adamantiumBloodFixture(float tension, int... expectedTiers) {
         long[] materialWeights = {823543L, 2352980L, 6722800L, 9604000L, 9604000L,
                 54880000L, 156800000L, 448000000L, 1280000000L, 512000000L};
-        return bloodFixture(tension, 128L, .96D, materialWeights, 2480787323D, expectedTiers);
+        return slotFixture(tension, 128L, .96D, materialWeights, 2480787323D, expectedTiers);
     }
-    private static BloodFixture thirdBloodFixture(float tension, int... expectedTiers) {
+    private static SlotFixture thirdBloodFixture(float tension, int... expectedTiers) {
         long[] materialWeights = {16807L, 48020L, 137200L, 196000L, 196000L, 1120000L, 3200000L, 1280000L, 512000L, 204800L};
-        return bloodFixture(tension, 96L, .92D, materialWeights, 6910827D, expectedTiers);
+        return slotFixture(tension, 96L, .92D, materialWeights, 6910827D, expectedTiers);
     }
-    private static BloodFixture bloodFixture(float tension, long highestDay, double acceptance, long[] materialWeights, double denominator, int... expectedTiers) {
+    private static SlotFixture slotFixture(float tension, long highestDay, double acceptance, long[] materialWeights, double denominator, int... expectedTiers) {
         candidates: for (long value = 0; value < 1_000_000; value++) {
             RandomSource random = RandomSource.create(value);
             for (int expected : expectedTiers) {
@@ -113,13 +115,21 @@ public final class BloodMoonEquipmentGameTests {
                 if (random.nextFloat() < Math.max(.1F * tension, Math.min(.75F, (highestDay - 1L) / 400F))) continue candidates; // Select a fixture without extra enchantment draws.
                 random.nextFloat(); // One source wear draw follows quality assignment, which consumes no RNG.
             }
-            return new BloodFixture(value, random.nextLong());
+            return new SlotFixture(value, random.nextLong());
         }
-        throw new AssertionError("No independent per-slot blood fixture");
+        throw new AssertionError("No independent per-slot armor fixture");
     }
     private static CompoundTag held(Mob mob) { return mob.getPersistentData().getCompound(BloodMoonEquipment.DATA_KEY).getCompound("held"); }
+    private static long emptyArmorSeed(double chance) {
+        candidates: for (long value = 0; value < 100_000; value++) {
+            RandomSource random = RandomSource.create(value);
+            for (int slot = 0; slot < SLOTS.size(); slot++) if (random.nextDouble() < chance) continue candidates;
+            return value;
+        }
+        throw new AssertionError("No independent fixture rejecting every armor slot");
+    }
     private static void emptyArmorRoll(Mob mob, double chance) {
-        mob.getRandom().setSeed(seed(chance, false)); BloodMoonEquipment.populate(mob);
+        mob.getRandom().setSeed(emptyArmorSeed(chance)); BloodMoonEquipment.populate(mob);
     }
     private static List<ItemStack> equipment(Mob mob) { return SLOTS.stream().map(slot -> mob.getItemBySlot(slot).copy()).toList(); }
     private static void unchanged(GameTestHelper h, Mob mob, List<ItemStack> before) {
@@ -132,26 +142,33 @@ public final class BloodMoonEquipmentGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void progressiveArmorIsOneWornSetAndNeverOverwritesExplicitEquipment(GameTestHelper h) {
+    public static void ordinaryArmorUsesIndependentWornPiecesAndPreservesExplicitEquipment(GameTestHelper h) {
         try (Progress saved = new Progress(h)) {
             set(h, 16, 6000);
             Mob mob = create(h, EntityType.ZOMBIE);
             ItemStack helmet = new ItemStack(Items.IRON_HELMET); helmet.setDamageValue(1);
             ItemStack weapon = new ItemStack(Items.IRON_SWORD);
             mob.setItemSlot(EquipmentSlot.HEAD, helmet); mob.setItemSlot(EquipmentSlot.MAINHAND, weapon);
-            mob.getRandom().setSeed(seed(.4, true));
+            long[] weights = {390625L, 156250L, 62500L, 12500L, 12500L, 10000L, 4000L, 1600L, 640L, 256L};
+            SlotFixture fixture = slotFixture(R196MobEquipment.tension(mob), 16L, .4D, weights, 650871D, -2, 0, -1, 1);
+            mob.getRandom().setSeed(fixture.seed());
             h.assertTrue(BloodMoonEquipment.populate(mob), "The shared source armor hook owns the progressive roll");
-            int tier = mob.getPersistentData().getCompound(BloodMoonEquipment.DATA_KEY).getInt("tier");
-            h.assertTrue(tier >= 0 && tier <= 9, "An accepted material draw is recorded");
+            CompoundTag decision = mob.getPersistentData().getCompound(BloodMoonEquipment.DATA_KEY);
+            h.assertTrue(Arrays.equals(new int[]{-1, 0, -1, 1}, decision.getIntArray("armor_tiers")),
+                    "Ordinary slots independently retain the helmet, generate leather, reject leggings and generate chainmail");
+            h.assertValueEqual(decision.getInt("filled_slots"), 10, "Only the two generated slots are marked for ownership");
+            h.assertValueEqual(decision.getInt("tier"), 0, "The compatibility tier describes the first generated slot");
             h.assertTrue(mob.getItemBySlot(EquipmentSlot.HEAD) == helmet && mob.getMainHandItem() == weapon,
                     "Explicit helmet and weapon retain their exact stacks");
-            for (int index = 1; index < SLOTS.size(); index++) {
-                ItemStack stack = mob.getItemBySlot(SLOTS.get(index));
-                h.assertValueEqual(BuiltInRegistries.ITEM.getKey(stack.getItem()).toString(),
-                        BloodMoonEquipmentRules.PREFIXES.get(tier) + SUFFIXES[index], "Every empty slot receives the one selected material");
+            h.assertTrue(mob.getItemBySlot(EquipmentSlot.CHEST).is(Items.LEATHER_CHESTPLATE)
+                    && mob.getItemBySlot(EquipmentSlot.LEGS).isEmpty() && mob.getItemBySlot(EquipmentSlot.FEET).is(Items.CHAINMAIL_BOOTS),
+                    "Real ordinary armor can mix materials and leave an interior slot empty");
+            for (var slot : List.of(EquipmentSlot.CHEST, EquipmentSlot.FEET)) {
+                ItemStack stack = mob.getItemBySlot(slot);
                 h.assertTrue(stack.isDamageableItem() && stack.getDamageValue() > 0 && stack.getDamageValue() < stack.getMaxDamage(),
                         "Source generated quality/wear is present on actual armor");
             }
+            h.assertValueEqual(mob.getRandom().nextLong(), fixture.nextRandom(), "The explicit helmet consumes no RNG and the three empty slots roll independently");
             var before = equipment(mob); mob.getRandom().setSeed(196L);
             BloodMoonEquipment.populate(mob); unchanged(h, mob, before);
             h.assertValueEqual(mob.getRandom().nextLong(), RandomSource.create(196L).nextLong(), "A repeated roll consumes no owner RNG");
@@ -163,7 +180,8 @@ public final class BloodMoonEquipmentGameTests {
     public static void acceptedAndEmptyRollsSurviveNativeNbtAndCannotUpgradeAfterTimeAdvances(GameTestHelper h) {
         try (Progress saved = new Progress(h)) {
             for (boolean success : new boolean[]{false, true}) {
-                set(h, 16, 6000); Mob mob = create(h, EntityType.ZOMBIE); mob.getRandom().setSeed(seed(.4, success));
+                set(h, 16, 6000); Mob mob = create(h, EntityType.ZOMBIE);
+                mob.getRandom().setSeed(success ? seed(.4, true) : emptyArmorSeed(.4));
                 BloodMoonEquipment.populate(mob); var before = equipment(mob);
                 h.assertTrue(SLOTS.stream().anyMatch(slot -> !mob.getItemBySlot(slot).isEmpty()) == success, "The independent acceptance fixture matches actual armor");
                 CompoundTag tag = new CompoundTag(); mob.saveWithoutId(tag);
@@ -292,11 +310,24 @@ public final class BloodMoonEquipmentGameTests {
                 h.assertValueEqual(decision.getInt("stage"), expected[index], "The actual ordinary spawn follows its material stage at highest day " + day);
                 h.assertTrue(!decision.getBoolean("blood_date") && decision.getDouble("progress") == expected[index],
                         "Ordinary and blue dates use the ordinary equipment mode");
-                if (decision.getInt("filled_slots") != 0) {
-                    int tier = decision.getInt("tier");
-                    for (int recorded : decision.getIntArray("armor_tiers")) h.assertValueEqual(recorded, tier,
-                            "An accepted ordinary spawn retains one shared set material at every date threshold");
+                int[] recorded = decision.getIntArray("armor_tiers");
+                h.assertValueEqual(recorded.length, SLOTS.size(), "An ordinary spawn records every independent slot");
+                int firstTier = -1;
+                int filledSlots = 0;
+                for (int slot = 0; slot < recorded.length; slot++) {
+                    int tier = recorded[slot];
+                    ItemStack stack = mob.getItemBySlot(SLOTS.get(slot));
+                    if (tier < 0) h.assertTrue(stack.isEmpty(), "A rejected ordinary slot remains empty");
+                    else {
+                        if (firstTier < 0) firstTier = tier;
+                        filledSlots |= 1 << slot;
+                        h.assertValueEqual(BuiltInRegistries.ITEM.getKey(stack.getItem()).toString(),
+                                BloodMoonEquipmentRules.PREFIXES.get(tier) + SUFFIXES[slot],
+                                "Each accepted ordinary slot equips its own recorded material");
+                    }
                 }
+                h.assertValueEqual(decision.getInt("filled_slots"), filledSlots, "Only successfully generated armor is marked");
+                h.assertValueEqual(decision.getInt("tier"), firstTier, "The compatibility tier follows the first generated slot");
             }
         }
         h.succeed();
@@ -396,7 +427,7 @@ public final class BloodMoonEquipmentGameTests {
             int tier = mob.getPersistentData().getCompound(BloodMoonEquipment.DATA_KEY).getInt("tier");
             mob.getRandom().setSeed(heldSeed(.485D, true, 1));
             BloodMoonEquipment.join(new EntityJoinLevelEvent(mob, h.getLevel(), false));
-            h.assertValueEqual(held(mob).getInt("tier"), tier, "A successfully generated set determines the independent held roll's material");
+            h.assertValueEqual(held(mob).getInt("tier"), tier, "The first generated piece determines the independent held roll's material");
             h.assertValueEqual(held(mob).getInt("tool"), 1, "Only the independent acceptance and family draws precede source item generation");
             h.assertTrue(mob.getMainHandItem().getItem().toString().contains("pickaxe"), "The held family is an actual pickaxe");
         }
@@ -522,24 +553,27 @@ public final class BloodMoonEquipmentGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void ordinaryArmorAndHeldRollsUseHalfBloodAcceptanceAndTheSameMaterialDistribution(GameTestHelper h) {
+    public static void ordinaryArmorAndHeldRollsUseTheirDefaultAcceptanceAndSharedMaterials(GameTestHelper h) {
         try (Progress saved = new Progress(h)) {
             set(h, 65, 64L * 24000L + 6000L);
-            // The iron stage has 45% armor and 42.5% held acceptance on ordinary dates.
-            // The iron interval spans 84861/348797 to 244861/348797.
+            // The iron stage has 45% armor acceptance per slot and 42.5% held acceptance on ordinary dates.
             Mob armored = create(h, MiteMobs.type(MobKind.GHOUL));
-            armored.getRandom().setSeed(fractionalSeed(.43D, .45D, .35D, .6D));
+            long[] weights = {2401L, 6860L, 19600L, 28000L, 28000L, 160000L, 64000L, 25600L, 10240L, 4096L};
+            SlotFixture fixture = slotFixture(R196MobEquipment.tension(armored), 65L, .45D, weights, 348797D, 5, -1, 6, -1);
+            armored.getRandom().setSeed(fixture.seed());
             BloodMoonEquipment.populate(armored);
-            h.assertValueEqual(armored.getPersistentData().getCompound(BloodMoonEquipment.DATA_KEY).getInt("tier"), 5,
-                    "Half blood acceptance and the shared material interval affect real registered items");
-            for (int index = 0; index < SLOTS.size(); index++) h.assertValueEqual(
-                    BuiltInRegistries.ITEM.getKey(armored.getItemBySlot(SLOTS.get(index)).getItem()).toString(), "minecraft:iron_" + SUFFIXES[index],
-                    "The ordinary roll creates one matching complete set with the blood-date material distribution");
+            CompoundTag decision = armored.getPersistentData().getCompound(BloodMoonEquipment.DATA_KEY);
+            h.assertTrue(Arrays.equals(new int[]{5, -1, 6, -1}, decision.getIntArray("armor_tiers")),
+                    "The default acceptance and material distribution roll independently in each ordinary slot");
+            h.assertTrue(armored.getItemBySlot(EquipmentSlot.HEAD).is(Items.IRON_HELMET)
+                            && armored.getItemBySlot(EquipmentSlot.LEGS).is(R196MobEquipment.item("mite:ancient_metal_leggings")),
+                    "The ordinary roll equips iron and ancient metal together");
+            h.assertValueEqual(armored.getRandom().nextLong(), fixture.nextRandom(), "Each accepted slot draws its own material and wear");
             armored.getRandom().setSeed(fractionalSeed(.395D, .425D, 0D, 1D));
             BloodMoonEquipment.join(new EntityJoinLevelEvent(armored, h.getLevel(), false));
             h.assertTrue(held(armored).getBoolean("generated") && !armored.getMainHandItem().isEmpty(),
                     "An empty hand accepts at 42.5 percent, half the same-stage blood chance of 85 percent");
-            h.assertValueEqual(held(armored).getInt("tier"), 5, "The held tool matches the generated ordinary armor material");
+            h.assertValueEqual(held(armored).getInt("tier"), 5, "The held tool matches the first generated ordinary armor material");
 
             Mob naked = create(h, MiteMobs.type(MobKind.GHOUL)); emptyArmorRoll(naked, .45D);
             naked.getRandom().setSeed(fractionalSeed(.395D, .425D, .35D, .6D));
@@ -553,22 +587,57 @@ public final class BloodMoonEquipmentGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void day48CanGenerateActualGoldCopperAndSilverSets(GameTestHelper h) {
+    public static void day48CanMixActualGoldCopperAndSilverInOneSpawn(GameTestHelper h) {
         try (Progress saved = new Progress(h)) {
             set(h, 48, 47L * 24000L + 6000L);
-            // Each material occupies 270000/1305129 of the same stage's material distribution.
-            double[][] drawIntervals = {{.1D, .25D}, {.3D, .45D}, {.52D, .66D}};
-            String[] prefixes = {"minecraft:golden_", "mite:copper_", "mite:silver_"};
-            for (int tier = 0; tier < prefixes.length; tier++) {
-                Mob mob = create(h, EntityType.ZOMBIE);
-                mob.getRandom().setSeed(fractionalSeed(.41D, .43D, drawIntervals[tier][0], drawIntervals[tier][1]));
-                BloodMoonEquipment.populate(mob);
-                CompoundTag decision = mob.getPersistentData().getCompound(BloodMoonEquipment.DATA_KEY);
-                h.assertTrue(decision.getInt("stage") == 3 && decision.getInt("tier") == tier + 2,
-                        "Day 48's shared stage can select each of the three materials");
-                for (int slot = 0; slot < SLOTS.size(); slot++) h.assertValueEqual(
-                        BuiltInRegistries.ITEM.getKey(mob.getItemBySlot(SLOTS.get(slot)).getItem()).toString(),
-                        prefixes[tier] + SUFFIXES[slot], "The selected material equips one matching set");
+            Mob mob = create(h, EntityType.ZOMBIE);
+            long[] weights = {8575L, 24500L, 90000L, 90000L, 90000L, 80000L, 32000L, 12800L, 5120L, 2048L};
+            int[] expected = {2, 3, -1, 4};
+            SlotFixture fixture = slotFixture(R196MobEquipment.tension(mob), 48L, .43D, weights, 435043D, expected);
+            mob.getRandom().setSeed(fixture.seed());
+            BloodMoonEquipment.populate(mob);
+            CompoundTag decision = mob.getPersistentData().getCompound(BloodMoonEquipment.DATA_KEY);
+            h.assertTrue(decision.getInt("stage") == 3 && Arrays.equals(expected, decision.getIntArray("armor_tiers")),
+                    "Day 48's shared stage rolls three different metals and leaves a slot empty");
+            h.assertTrue(mob.getItemBySlot(EquipmentSlot.HEAD).is(Items.GOLDEN_HELMET)
+                            && mob.getItemBySlot(EquipmentSlot.CHEST).is(R196MobEquipment.item("mite:copper_chestplate"))
+                            && mob.getItemBySlot(EquipmentSlot.LEGS).isEmpty()
+                            && mob.getItemBySlot(EquipmentSlot.FEET).is(R196MobEquipment.item("mite:silver_boots")),
+                    "The three material draws generate the actual mixed armor items");
+            h.assertValueEqual(mob.getRandom().nextLong(), fixture.nextRandom(), "Mixing the three metals consumes one material draw per accepted slot");
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void savedArmorSettingsControlDatesAndBothSlotProbabilities(GameTestHelper h) {
+        var previous = MonsterArmorSettings.localSettings();
+        try (Progress saved = new Progress(h)) {
+            var rows = new ArrayList<>(MonsterArmorRules.DEFAULTS.rows());
+            rows.set(0, new MonsterArmorRules.Row(16L, 19L, 40D, 80D));
+            rows.set(1, new MonsterArmorRules.Row(20L, 47L, 0D, 100D));
+            var settings = new MonsterArmorRules.Settings(rows);
+            try {
+                h.assertTrue(MonsterArmorSettings.save(settings), "The live armor settings accept the edited ranges and chances");
+                h.assertTrue(MonsterArmorSettings.localSettings().equals(settings), "The saved settings immediately become authoritative");
+                set(h, 20L, 19L * 24000L + 6000L);
+                Mob ordinary = create(h, EntityType.ZOMBIE);
+                h.assertTrue(BloodMoonEquipment.populate(ordinary), "The edited chainmail range governs day 20");
+                CompoundTag ordinaryDecision = ordinary.getPersistentData().getCompound(BloodMoonEquipment.DATA_KEY);
+                h.assertValueEqual(ordinaryDecision.getInt("stage"), 1, "The chainmail stage starts on the configured day");
+                h.assertTrue(!ordinaryDecision.getBoolean("blood_date") && SLOTS.stream().allMatch(slot -> ordinary.getItemBySlot(slot).isEmpty()),
+                        "The configured 0-percent ordinary chance rejects each empty slot");
+
+                set(h, 32L, 31L * 24000L + 6000L);
+                Mob blood = create(h, EntityType.ZOMBIE);
+                h.assertTrue(BloodMoonEquipment.populate(blood), "The edited range also governs real blood dates");
+                CompoundTag bloodDecision = blood.getPersistentData().getCompound(BloodMoonEquipment.DATA_KEY);
+                h.assertTrue(bloodDecision.getInt("stage") == 1 && bloodDecision.getBoolean("blood_date"),
+                        "Blood dates use the same configured material range");
+                h.assertTrue(SLOTS.stream().allMatch(slot -> !blood.getItemBySlot(slot).isEmpty()),
+                        "The configured 100-percent blood chance accepts each empty slot");
+            } finally {
+                h.assertTrue(MonsterArmorSettings.save(previous), "Restore the original armor settings after the test");
             }
         }
         h.succeed();
@@ -646,7 +715,7 @@ public final class BloodMoonEquipmentGameTests {
             set(h, 32, 31L * 24000L + 6000L);
             Mob mob = create(h, MiteMobs.type(MobKind.GHOUL));
             int[] expected = {0, 1, -1, 2};
-            BloodFixture fixture = firstBloodFixture(R196MobEquipment.tension(mob), expected);
+            SlotFixture fixture = firstBloodFixture(R196MobEquipment.tension(mob), expected);
             mob.getRandom().setSeed(fixture.seed()); BloodMoonEquipment.populate(mob);
             CompoundTag decision = mob.getPersistentData().getCompound(BloodMoonEquipment.DATA_KEY);
             h.assertTrue(Arrays.equals(expected, decision.getIntArray("armor_tiers")), "One real blood spawn independently gets leather, chain, no leggings and gold");
@@ -683,7 +752,7 @@ public final class BloodMoonEquipmentGameTests {
             h.getLevel().getServer().overworld().setDayTime(95L * 24000L + 6000L);
             Mob mob = create(h, MiteMobs.type(MobKind.GHOUL));
             int[] expected = {8, 7, -1, 8};
-            BloodFixture fixture = adamantiumBloodFixture(R196MobEquipment.tension(mob), expected);
+            SlotFixture fixture = adamantiumBloodFixture(R196MobEquipment.tension(mob), expected);
             mob.getRandom().setSeed(fixture.seed()); BloodMoonEquipment.populate(mob);
             CompoundTag decision = mob.getPersistentData().getCompound(BloodMoonEquipment.DATA_KEY);
             h.assertTrue(decision.getInt("stage") == 8 && decision.getLong("highest_day") == 128L && decision.getBoolean("blood_date"),
@@ -706,7 +775,7 @@ public final class BloodMoonEquipmentGameTests {
             set(h, 96, 95L * 24000L + 6000L);
             Mob mob = create(h, MiteMobs.type(MobKind.GHOUL));
             int[] expected = {6, 3, 4, 6};
-            BloodFixture fixture = thirdBloodFixture(R196MobEquipment.tension(mob), expected);
+            SlotFixture fixture = thirdBloodFixture(R196MobEquipment.tension(mob), expected);
             mob.getRandom().setSeed(fixture.seed()); BloodMoonEquipment.populate(mob);
             CompoundTag decision = mob.getPersistentData().getCompound(BloodMoonEquipment.DATA_KEY);
             h.assertTrue(decision.getInt("stage") == 6 && decision.getLong("highest_day") == 96L && decision.getBoolean("blood_date"),
@@ -728,7 +797,7 @@ public final class BloodMoonEquipmentGameTests {
             set(h, 32, 31L * 24000L + 6000L);
             Mob mob = create(h, MiteMobs.type(MobKind.GHOUL));
             ItemStack helmet = new ItemStack(Items.IRON_HELMET); helmet.setDamageValue(1); mob.setItemSlot(EquipmentSlot.HEAD, helmet);
-            BloodFixture fixture = firstBloodFixture(R196MobEquipment.tension(mob), -2, 1, -1, 0);
+            SlotFixture fixture = firstBloodFixture(R196MobEquipment.tension(mob), -2, 1, -1, 0);
             mob.getRandom().setSeed(fixture.seed()); BloodMoonEquipment.populate(mob);
             CompoundTag decision = mob.getPersistentData().getCompound(BloodMoonEquipment.DATA_KEY);
             h.assertTrue(mob.getItemBySlot(EquipmentSlot.HEAD) == helmet, "An explicit blood-date helmet retains its exact stack");
@@ -749,7 +818,7 @@ public final class BloodMoonEquipmentGameTests {
         try (Progress saved = new Progress(h)) {
             set(h, 32, 31L * 24000L + 6000L);
             Mob mob = create(h, MiteMobs.type(MobKind.GHOUL));
-            BloodFixture fixture = firstBloodFixture(R196MobEquipment.tension(mob), 0, 1, -1, 2);
+            SlotFixture fixture = firstBloodFixture(R196MobEquipment.tension(mob), 0, 1, -1, 2);
             mob.getRandom().setSeed(fixture.seed()); BloodMoonEquipment.populate(mob);
             BloodMoonEquipment.join(new EntityJoinLevelEvent(mob, h.getLevel(), false));
             CompoundTag decision = mob.getPersistentData().getCompound(BloodMoonEquipment.DATA_KEY).copy();
@@ -774,7 +843,7 @@ public final class BloodMoonEquipmentGameTests {
         try (Progress saved = new Progress(h)) {
             set(h, 32, 31L * 24000L + 6000L);
             Mob mob = create(h, MiteMobs.type(MobKind.GHOUL));
-            BloodFixture fixture = firstBloodFixture(R196MobEquipment.tension(mob), -1, -1, -1, -1);
+            SlotFixture fixture = firstBloodFixture(R196MobEquipment.tension(mob), -1, -1, -1, -1);
             mob.getRandom().setSeed(fixture.seed()); BloodMoonEquipment.populate(mob);
             CompoundTag decision = mob.getPersistentData().getCompound(BloodMoonEquipment.DATA_KEY);
             h.assertTrue(Arrays.equals(new int[]{-1, -1, -1, -1}, decision.getIntArray("armor_tiers"))
@@ -798,7 +867,7 @@ public final class BloodMoonEquipmentGameTests {
             set(h, 160L, 159L * 24000L + 6000L);
             Mob blood = create(h, MiteMobs.type(MobKind.GHOUL));
             int[] expected = {9, 8, -1, 9};
-            BloodFixture fixture = bloodFixture(R196MobEquipment.tension(blood), 160L, .98D, weights, 39381511261D, expected);
+            SlotFixture fixture = slotFixture(R196MobEquipment.tension(blood), 160L, .98D, weights, 39381511261D, expected);
             blood.getRandom().setSeed(fixture.seed()); BloodMoonEquipment.populate(blood);
             CompoundTag decision = blood.getPersistentData().getCompound(BloodMoonEquipment.DATA_KEY);
             h.assertValueEqual(decision.getInt("stage"), 9, "The fourth blood moon uses the Vibranium stage unlocked on day 144");

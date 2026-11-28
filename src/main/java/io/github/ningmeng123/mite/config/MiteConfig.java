@@ -60,7 +60,7 @@ public final class MiteConfig {
     public static final ModConfigSpec.ConfigValue<List<? extends String>> DISABLED_ENCHANTMENTS, ENCHANTMENT_MAX_LEVELS, ENCHANTMENT_CHANCES;
     public static final ModConfigSpec.ConfigValue<List<? extends String>> NATURAL_SPAWN_RATES;
     public static final ModConfigSpec.ConfigValue<List<? extends String>> NATURAL_SPAWN_WEIGHTS;
-    static final ModConfigSpec.ConfigValue<List<? extends String>> GRAVEL_RATES;
+    static final ModConfigSpec.ConfigValue<List<? extends String>> GRAVEL_RATES, MONSTER_ARMOR_PROGRESSION;
     public static final Map<MonsterSpawningSettings.Option, ModConfigSpec.ConfigValue<? extends Number>> SPAWNING_CONTROLS =
             new EnumMap<>(MonsterSpawningSettings.Option.class);
     private static final Snapshot FACTORY;
@@ -159,6 +159,9 @@ public final class MiteConfig {
         MONSTER_DAMAGE_BLOOD_MOON_FORMULA = builder.translation("mite.config.damage_blood_moon_formula")
                 .comment("Innate attack baseline settlement when each blood moon ends. The result becomes the next period's base and reference. Empty inherits damage_formula.")
                 .define("damage_blood_moon_formula", BundledGameplayDefaults.text("monsters.damage_blood_moon_formula", ""), MiteConfig::validOptionalFormulaSyntax);
+        MONSTER_ARMOR_PROGRESSION = builder.translation("mite.config.monster_armor")
+                .comment("Monster armor progression: material=start_day,end_day,ordinary_percent,blood_moon_percent. Day ranges are inclusive and must not overlap. Use * for an open-ended range. Both probabilities apply per empty slot. Supply all eight material rows or leave the list empty for defaults.")
+                .defineListAllowEmpty(List.of("armor_progression"), List::of, () -> "leather=16,31,40,80", MonsterArmorSettings::validEntry);
         builder.pop();
         builder.translation("mite.config.monster_spawning").push("monster_spawning");
         NATURAL_SPAWN_RATES = builder.translation("mite.config.natural_spawn_rates")
@@ -1023,6 +1026,7 @@ public final class MiteConfig {
         EnchantmentCatalog.entries();
         refreshEnchantmentRules();
         GravelDropSettings.reload();
+        MonsterArmorSettings.reload();
         GameplayConfigSync.broadcast();
     }
 }

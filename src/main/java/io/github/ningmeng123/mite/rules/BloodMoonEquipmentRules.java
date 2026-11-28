@@ -30,16 +30,9 @@ public final class BloodMoonEquipmentRules {
         return stageForDay(bloodMoons * 32L);
     }
 
-    /** Shared highest-day material stage. -1 uses the early source equipment path. */
+    /** Default highest-day material stage. -1 uses the early source equipment path. */
     public static int stageForDay(long highestDay) {
-        if (highestDay >= 144L) return HIGHEST_TIER;
-        if (highestDay >= 128L) return 8;
-        if (highestDay >= 112L) return 7;
-        if (highestDay >= 96L) return 6;
-        if (highestDay >= 64L) return 5;
-        if (highestDay >= 48L) return MIXED_METAL_STAGE;
-        if (highestDay >= 32L) return 1;
-        return ordinaryActive(highestDay) ? 0 : -1;
+        return MonsterArmorRules.DEFAULTS.stageForDay(highestDay);
     }
 
     /** Stable item indices remain compatible with saved equipment and calendar basis rows. */
@@ -105,7 +98,7 @@ public final class BloodMoonEquipmentRules {
         return HIGHEST_TIER;
     }
 
-    /** Blood dates roll each slot independently; ordinary whole-set acceptance is exactly half. */
+    /** Default per-slot rates before applying any configured date and probability overrides. */
     public static double armorChance(int stage, boolean bloodDate) {
         checkStage(stage);
         return (80 + 2 * stage) / 100D * (bloodDate ? 1D : ORDINARY_EQUIPMENT_FACTOR);

@@ -35,8 +35,12 @@ public final class SimplySwordsMobRules {
     }
 
     public static String selectMaterial(long highestDay, boolean bloodDate, double draw) {
+        return selectMaterial(highestDay, bloodDate, draw, MonsterArmorRules.DEFAULTS);
+    }
+
+    public static String selectMaterial(long highestDay, boolean bloodDate, double draw, MonsterArmorRules.Settings settings) {
         if (!(draw >= 0D && draw < 1D)) throw new IllegalArgumentException("Material draw must be in [0,1)");
-        int stage = BloodMoonEquipmentRules.stageForDay(highestDay);
+        int stage = settings.stageForDay(highestDay);
         if (stage < 0) return "rusted_iron";
         int tier = bloodDate ? BloodMoonEquipmentRules.selectTier(stage, true, draw)
                 : BloodMoonEquipmentRules.selectOrdinaryTier(stage, draw);

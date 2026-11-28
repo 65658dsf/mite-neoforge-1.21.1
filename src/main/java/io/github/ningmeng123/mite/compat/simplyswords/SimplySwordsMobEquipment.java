@@ -1,5 +1,6 @@
 package io.github.ningmeng123.mite.compat.simplyswords;
 
+import io.github.ningmeng123.mite.config.MonsterArmorSettings;
 import io.github.ningmeng123.mite.Mite;
 import io.github.ningmeng123.mite.entity.MobShields;
 import io.github.ningmeng123.mite.entity.BloodMoonEquipment;
@@ -108,7 +109,7 @@ public final class SimplySwordsMobEquipment {
         if (families.isEmpty() || mob.getRandom().nextFloat() >= SimplySwordsMobRules.EQUIP_CHANCE) return false;
         String material = establishedMaterial(mob);
         if (material == null) material = SimplySwordsMobRules.selectMaterial(result.getLong("highest_day"),
-                result.getBoolean("blood_date"), mob.getRandom().nextDouble());
+                result.getBoolean("blood_date"), mob.getRandom().nextDouble(), MonsterArmorSettings.localSettings());
         String family = families.get(mob.getRandom().nextInt(families.size()));
         var item = SimplySwordsCompat.weapon(material, family);
         if (item == Items.AIR) return false;

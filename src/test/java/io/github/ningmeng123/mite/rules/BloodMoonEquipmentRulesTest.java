@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,9 +35,9 @@ class BloodMoonEquipmentRulesTest {
 
     @Test void day64FavorsIronAndTheThirdBloodMoonFavorsAncientMetal() {
         double ironStage = BloodMoonEquipmentRules.ordinaryProgress(64);
-        double ironSetChance = BloodMoonEquipmentRules.ordinaryArmorChance(ironStage)
+        double ironSlotChance = BloodMoonEquipmentRules.ordinaryArmorChance(ironStage)
                 * BloodMoonEquipmentRules.ordinaryTierChance(ironStage, 5);
-        assertEquals(72000D / 348797D, ironSetChance, 1E-15);
+        assertEquals(72000D / 348797D, ironSlotChance, 1E-15);
 
         int stage = BloodMoonEquipmentRules.stageForDay(96);
         double ancientMetal = BloodMoonEquipmentRules.tierChance(stage, 6, true);
@@ -46,6 +47,27 @@ class BloodMoonEquipmentRulesTest {
         double ancientMetalPerSlot = BloodMoonEquipmentRules.armorChance(stage, true) * ancientMetal;
         assertEquals(2944000D / 6910827D, ancientMetalPerSlot, 1E-15);
         assertEquals(.8914442188091787D, 1D - Math.pow(1D - ancientMetalPerSlot, 4), 1E-15);
+    }
+
+    @Test void configuredArmorWindowsAndRatesAreIndependentAndRangesCannotOverlap() {
+        var rows = new ArrayList<>(MonsterArmorRules.DEFAULTS.rows());
+        rows.set(0, new MonsterArmorRules.Row(17, 20, 71.25, 0));
+        rows.set(1, new MonsterArmorRules.Row(22, 47, 0, 100));
+        var settings = new MonsterArmorRules.Settings(rows);
+        assertEquals(-1, settings.stageForDay(16));
+        assertEquals(0, settings.stageForDay(17));
+        assertEquals(.7125, settings.rows().get(settings.rowForDay(20)).chance(false));
+        assertEquals(0, settings.rows().get(settings.rowForDay(20)).chance(true));
+        assertEquals(-1, settings.stageForDay(21));
+        assertEquals(1, settings.stageForDay(22));
+        assertEquals(1, settings.rows().get(settings.rowForDay(22)).chance(true));
+        assertEquals(9, settings.stageForDay(Long.MAX_VALUE));
+        rows.set(0, new MonsterArmorRules.Row(17, 22, 70, 40));
+        assertThrows(IllegalArgumentException.class, () -> new MonsterArmorRules.Settings(rows));
+        assertThrows(IllegalArgumentException.class, () -> new MonsterArmorRules.Row(0, 20, 70, 40));
+        assertThrows(IllegalArgumentException.class, () -> new MonsterArmorRules.Row(17, 16, 70, 40));
+        assertThrows(IllegalArgumentException.class, () -> new MonsterArmorRules.Row(17, 20, 101, 40));
+        assertThrows(IllegalArgumentException.class, () -> new MonsterArmorRules.Row(17, 20, 70, Double.NaN));
     }
 
     @Test void preDay16UsesLegacyArmorAndFirstBloodUsesTheChainmailStage() throws Exception {

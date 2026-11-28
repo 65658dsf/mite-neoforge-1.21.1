@@ -14,6 +14,7 @@ import io.github.ningmeng123.mite.client.config.ConfigSearchIndex;
 import io.github.ningmeng123.mite.client.config.EnchantmentSettingsScreen;
 import io.github.ningmeng123.mite.client.config.GravelDropSettingsScreen;
 import io.github.ningmeng123.mite.client.config.MiteSettingsScreen;
+import io.github.ningmeng123.mite.client.config.MonsterArmorSettingsScreen;
 import io.github.ningmeng123.mite.client.config.MonsterGrowthSettingsScreen;
 import io.github.ningmeng123.mite.client.config.MonsterSpawnSettingsScreen;
 import io.github.ningmeng123.mite.client.config.MonsterSpawningRulesScreen;
@@ -21,6 +22,8 @@ import io.github.ningmeng123.mite.client.config.OreGenerationSettingsScreen;
 import io.github.ningmeng123.mite.client.config.SingleConfigValueScreen;
 import io.github.ningmeng123.mite.config.GravelDropSettings;
 import io.github.ningmeng123.mite.config.MiteConfig;
+import io.github.ningmeng123.mite.config.MonsterArmorSettings;
+import io.github.ningmeng123.mite.rules.MonsterArmorRules;
 import io.github.ningmeng123.mite.rules.OreHeightRange;
 import io.github.ningmeng123.mite.rules.R196OreRules.Dimension;
 import io.github.ningmeng123.mite.rules.R196OreRules.Kind;
@@ -69,6 +72,7 @@ public final class SettingsSearchClientAudit {
     private static String originalLanguage;
     private static Double originalReach, originalReduction;
     private static GravelDropSettings.Rates originalGravelRates;
+    private static MonsterArmorRules.Settings originalArmorSettings;
     private static final List<Runnable> restoreSettings = new ArrayList<>();
     private static Path configFile;
     private static byte[] originalFile;
@@ -131,6 +135,7 @@ public final class SettingsSearchClientAudit {
         auditCategories(mc, home, ite && !legacyIte);
         auditBaseCategoryEditors(mc, home);
         auditBaseSearchEditors(mc, home);
+        auditMonsterArmorSettings(mc, home);
         search(home).setValue("攻击距离");
         check(matches(home).stream().anyMatch(entry -> entry.id().equals("mite:combat.weapon_reach_multiplier")),
                 "Chinese configuration label search finds the actual reach setting");
@@ -315,6 +320,83 @@ public final class SettingsSearchClientAudit {
         } finally {
             box.setFocused(focused);
         }
+    }
+
+    private static void auditMonsterArmorSettings(Minecraft mc, Screen home) throws Exception {
+        originalArmorSettings = MonsterArmorSettings.localSettings();
+        rememberSetting(MiteConfig.SPEC.getValues().get("monsters.armor_progression"));
+        home.init(mc, 320, 240);
+        press(home, "mite.config.category.creatures");
+        Screen creatures = mc.screen;
+        press(creatures, "mite.config.monster_armor");
+        Screen armor = mc.screen;
+        check(armor instanceof MonsterArmorSettingsScreen, "The Creatures category opens the real monster armor table");
+        armor.init(mc, 320, 240);
+        press(armor, "mite.config.reset");
+        check(editBoxes(armor).size() < MonsterArmorRules.MATERIALS.size() * 3 && button(armor, ">").active,
+                "The monster armor table paginates at 320x240");
+        check(armorInput(armor, "leather", "days").getValue().equals("[16,31]")
+                        && armorInput(armor, "leather", "ordinary").getValue().equals("40%")
+                        && armorInput(armor, "leather", "blood").getValue().equals("80%"),
+                "The real leather row starts with its default inclusive range and both chances");
+        bounds(armor); noOverlap(armor); capture(mc, armor, 320, 240, "settings-monster-armor-zh-cn");
+
+        armorInput(armor, "leather", "days").setValue("[16,32]");
+        check(!button(armor, "mite.config.save").active, "Overlapping leather and chainmail ranges disable Save");
+        press(armor, ">");
+        check(!button(armor, "mite.config.save").active, "A hidden overlapping draft blocks Save on the next page");
+        press(armor, "<");
+        check(armorInput(armor, "leather", "days").getValue().equals("[16,32]"), "Paging keeps the pending day range");
+        armorInput(armor, "leather", "days").setValue("[18,30]");
+        armorInput(armor, "leather", "ordinary").setValue("101%");
+        check(!button(armor, "mite.config.save").active, "Over 100% disables Save");
+        armorInput(armor, "leather", "ordinary").setValue("44%");
+        armorInput(armor, "leather", "blood").setValue("73");
+
+        armor.init(mc, 854, 480);
+        check(editBoxes(armor).size() == MonsterArmorRules.MATERIALS.size() * 3
+                        && armorInput(armor, "vibranium", "days").getValue().equals("[144,∞]"),
+                "The large table fits every material including the open-ended vibranium row");
+        check(armorInput(armor, "leather", "days").getValue().equals("[18,30]")
+                        && armorInput(armor, "leather", "ordinary").getValue().equals("44%")
+                        && armorInput(armor, "leather", "blood").getValue().equals("73"),
+                "Resizing keeps all three unsaved leather cells");
+        bounds(armor); noOverlap(armor); capture(mc, armor, 854, 480, "settings-monster-armor-draft-zh-cn");
+        press(armor, "mite.config.save");
+        var expected = new MonsterArmorRules.Row(18, 30, 44D, 73D);
+        check(mc.screen == creatures && MonsterArmorSettings.localSettings().rows().getFirst().equals(expected),
+                "Save publishes both percentages and the edited days and returns to the Creatures category");
+        var disk = new TomlParser().parse(Files.readString(configFile));
+        check(disk.get("monsters.armor_progression") instanceof List<?> entries
+                        && entries.contains("leather=18,30,44.0,73.0"),
+                "The edited row is present in the real COMMON configuration");
+        creatures.onClose();
+
+        String id = "mite:monsters.armor_progression";
+        search(home).setValue("怪物装备");
+        check(matches(home).stream().anyMatch(entry -> entry.id().equals(id)), "The armor table is searchable by its Chinese title");
+        search(home).setValue(id);
+        openOnlyResult(home, id);
+        armor = mc.screen;
+        check(armor instanceof MonsterArmorSettingsScreen, "The search result reopens the same dedicated table");
+        armor.init(mc, 320, 240);
+        check(armorInput(armor, "leather", "days").getValue().equals("[18,30]")
+                        && armorInput(armor, "leather", "ordinary").getValue().equals("44%")
+                        && armorInput(armor, "leather", "blood").getValue().equals("73%"),
+                "The newly opened table uses the saved values");
+        press(armor, "mite.config.reset");
+        press(armor, "mite.config.save");
+        check(mc.screen == home && MonsterArmorSettings.localSettings().equals(MonsterArmorRules.DEFAULTS),
+                "Reset and Save restore the factory material table");
+        search(home).setValue("");
+        report.addProperty("monster_armor_entry_search_layout_validation_save_and_reset", true);
+    }
+
+    private static EditBox armorInput(Screen armor, String material, String column) {
+        String prefix = "mite.config.monster_armor.";
+        String label = Component.translatable(prefix + "material." + material).getString() + " · "
+                + Component.translatable(prefix + column).getString();
+        return editBoxes(armor).stream().filter(box -> box.getMessage().getString().equals(label)).findFirst().orElseThrow();
     }
 
     private static void auditGravelDropSettings(Minecraft mc, Screen home, boolean ite) throws Exception {
@@ -652,6 +734,9 @@ public final class SettingsSearchClientAudit {
                 MiteConfig.WEAPON_REACH_REDUCTION.set(originalReduction);
                 if (originalGravelRates != null) check(GravelDropSettings.save(originalGravelRates),
                         "Original in-memory gravel rates restored");
+                if (originalArmorSettings != null) check(MonsterArmorSettings.save(originalArmorSettings)
+                                && MonsterArmorSettings.localSettings().equals(originalArmorSettings),
+                        "Original in-memory monster armor settings restored");
                 restoreSettings.forEach(Runnable::run);
                 MiteConfig.SPEC.save();
                 MiteConfig.refreshEnchantmentRules();

@@ -32,6 +32,8 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 @GameTestHolder("mite_equipment_progression")
 @PrefixGameTestTemplate(false)
 public final class PiglinArmorGameTests {
+    private static final List<EquipmentSlot> ARMOR_SLOTS = List.of(EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET);
+
     @GameTest(template = "empty")
     public static void piglinsAndBrutesRollDateArmorWithABaseTierOfGold(GameTestHelper h) {
         try (var clock = new SourceEquipmentDateFixture(h)) {
@@ -62,11 +64,8 @@ public final class PiglinArmorGameTests {
                 history.restoreProgress(laterOrdinaryDay);
                 var later = prepare(type, nether, ordinarySeed(laterOrdinaryDay, 5));
                 finalizeSpawn(later, nether);
-                h.assertTrue(later.getItemBySlot(EquipmentSlot.HEAD).is(Items.IRON_HELMET)
-                                && later.getItemBySlot(EquipmentSlot.CHEST).is(Items.IRON_CHESTPLATE)
-                                && later.getItemBySlot(EquipmentSlot.LEGS).is(Items.IRON_LEGGINGS)
-                                && later.getItemBySlot(EquipmentSlot.FEET).is(Items.IRON_BOOTS),
-                        "A later ordinary iron roll equips the full iron set for " + type);
+                h.assertTrue(later.getItemBySlot(EquipmentSlot.HEAD).is(Items.IRON_HELMET),
+                        "A later ordinary iron roll independently equips an iron helmet for " + type);
             }
         }
         h.succeed();
@@ -84,7 +83,7 @@ public final class PiglinArmorGameTests {
 
             var late = prepare(EntityType.PIGLIN_BRUTE, nether, unarmoredWeaponSeed(unlockedDay, true));
             finalizeSpawn(late, nether);
-            h.assertTrue(late.getItemBySlot(EquipmentSlot.HEAD).isEmpty()
+            h.assertTrue(ARMOR_SLOTS.stream().allMatch(slot -> late.getItemBySlot(slot).isEmpty())
                             && late.getMainHandItem().is(MiteTools.get("mite:vibranium_axe")),
                     "The real spawn rolls a higher-tier axe when there is no armor to borrow a tier from");
 
@@ -187,9 +186,10 @@ public final class PiglinArmorGameTests {
 
     private static long unarmoredWeaponSeed(long day, boolean upgrade) {
         double progress = BloodMoonEquipmentRules.ordinaryProgress(day);
-        for (long seed = 0L; seed < 100_000L; seed++) {
+        double armorChance = BloodMoonEquipmentRules.ordinaryArmorChance(progress);
+        candidates: for (long seed = 0L; seed < 100_000L; seed++) {
             var random = RandomSource.create(seed);
-            if (random.nextDouble() < BloodMoonEquipmentRules.ordinaryArmorChance(progress)) continue;
+            for (int slot = 0; slot < ARMOR_SLOTS.size(); slot++) if (random.nextDouble() < armorChance) continue candidates;
             boolean accepted = random.nextDouble() < BloodMoonEquipmentRules.ordinaryHeldChance(progress);
             if (upgrade ? accepted && BloodMoonEquipmentRules.selectOrdinaryTier(progress, random.nextDouble())
                     == BloodMoonEquipmentRules.HIGHEST_TIER : !accepted) return seed;

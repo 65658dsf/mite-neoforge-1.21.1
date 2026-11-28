@@ -1,5 +1,6 @@
 package io.github.ningmeng123.mite.entity;
 
+import io.github.ningmeng123.mite.config.MonsterArmorSettings;
 import io.github.ningmeng123.mite.registry.MiteArmorContent;
 import io.github.ningmeng123.mite.registry.MiteTools;
 import io.github.ningmeng123.mite.rules.BloodMoonEquipmentRules;
@@ -72,7 +73,7 @@ public final class SpecialMobEquipment {
         if (data.contains(DATA_KEY)) return data.getCompound(DATA_KEY);
         long day = BloodMoonInvasion.highestDay(level);
         boolean blood = BloodMoonEquipment.bloodDate(mob);
-        int stage = BloodMoonEquipmentRules.stageForDay(day);
+        int stage = MonsterArmorSettings.localSettings().stageForDay(day);
         CompoundTag result = new CompoundTag();
         result.putInt("version", 1);
         result.putLong("highest_day", day);

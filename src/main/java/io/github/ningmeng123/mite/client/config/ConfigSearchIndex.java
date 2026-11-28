@@ -136,6 +136,7 @@ public final class ConfigSearchIndex {
     private static boolean miteAvailable(List<String> path) {
         if (!MiteConfigClient.remoteServer()) return true;
         String section = path.getFirst(), key = path.getLast();
+        if (section.equals("monsters") && key.equals("armor_progression")) return true;
         if (section.endsWith("_generation") && (key.equals("candidates") || key.equals("chance_percent"))) return false;
         if (section.equals("monster_spawning") && !key.equals("rates") && !key.equals("weights")
                 && !MiteExtensions.policy().spawningControls().isEmpty()) return false;
@@ -164,6 +165,7 @@ public final class ConfigSearchIndex {
                     label(Mite.MOD_ID, path, ((ModConfigSpec)config.getSpec()).getSpec().get(path)));
             return new MonsterSpawningRulesScreen(parent, key);
         }
+        if (section.equals("monsters") && key.equals("armor_progression")) return new MonsterArmorSettingsScreen(parent);
         if (section.equals("monsters") && !key.endsWith("_multiplier"))
             return new MonsterGrowthSettingsScreen(parent, key);
         if (MiteConfigClient.remoteServer()) return new ServerGameplaySettingsScreen(parent, String.join(".", path));

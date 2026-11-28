@@ -133,6 +133,7 @@ public final class MiteSettingsScreen extends Screen {
             case CREATURES -> List.of(
                     entry("mite.config.spawning_rules.button", MonsterSpawningRulesScreen::new),
                     entry("mite.config.monster_spawning", screen -> ConfigSearchIndex.monsterScreen(screen, "")),
+                    entry("mite.config.monster_armor", MonsterArmorSettingsScreen::new),
                     entry("mite.config.monster_formulas", MonsterGrowthSettingsScreen::new),
                     entry("mite.config.monsters", "monsters", key -> key.endsWith("_multiplier")));
             case COMBAT -> List.of(
